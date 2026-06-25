@@ -1,0 +1,19 @@
+# Mac OS faaltu files
+.DS_Store
+**/.DS_Store
+
+# Node modules — kabhi commit mat karo
+node_modules/
+**/node_modules/
+
+# Environment files — secret hain
+.env
+.env.local
+**/.env
+
+# Build files
+dist/
+build/
+
+# Firebase key
+*.json
