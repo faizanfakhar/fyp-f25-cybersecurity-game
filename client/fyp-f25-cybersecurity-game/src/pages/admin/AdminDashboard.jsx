@@ -1,7 +1,6 @@
 // ============================================================
 // AdminDashboard.jsx — Admin Panel
 // Stats cards, Recharts chart, Users table
-// IMPORTANT: npm install recharts karna hoga pehle
 // ============================================================
 
 import { useState, useEffect } from "react";
@@ -22,14 +21,14 @@ import {
 
 // ─── Sidebar nav ─────────────────────────────────────────────
 const ADMIN_NAV = [
-  { icon: LayoutDashboard, label: "Overview",   active: true  },
-  { icon: Users,           label: "Users",      active: false },
-  { icon: Target,          label: "Scenarios",  active: false },
-  { icon: BarChart2,       label: "Analytics",  active: false },
-  { icon: Settings,        label: "Settings",   active: false },
+  { icon: LayoutDashboard, label: "Overview",  active: true  },
+  { icon: Users,           label: "Users",     active: false },
+  { icon: Target,          label: "Scenarios", active: false },
+  { icon: BarChart2,       label: "Analytics", active: false },
+  { icon: Settings,        label: "Settings",  active: false },
 ];
 
-// ─── Sample chart data (baad mein real data se replace karo) ─
+// ─── Sample chart data (replace with real data later) ────────
 const CHART_DATA = [
   { day: "Mon", users: 12, missions: 34 },
   { day: "Tue", users: 19, missions: 52 },
@@ -40,7 +39,7 @@ const CHART_DATA = [
   { day: "Sun", users: 18, missions: 47 },
 ];
 
-// ─── Difficulty badge ─────────────────────────────────────────
+// ─── Level badge component ────────────────────────────────────
 const LevelBadge = ({ level }) => {
   const colors = {
     1: "bg-green-500/10  text-green-400",
@@ -56,7 +55,7 @@ const LevelBadge = ({ level }) => {
 };
 
 export default function AdminDashboard() {
-  const navigate          = useNavigate();
+  const navigate           = useNavigate();
   const { user, userData } = useAuth();
   const [users,        setUsers]        = useState([]);
   const [stats,        setStats]        = useState({ totalUsers: 0, totalMissions: 0, avgScore: 0 });
@@ -65,24 +64,24 @@ export default function AdminDashboard() {
 
   const displayName = userData?.displayName || user?.displayName || "Admin";
 
-  // ─── Firestore se users fetch karo ──────────────────────────
+  // ─── Fetch users from Firestore ──────────────────────────────
   useEffect(() => {
     const fetchUsers = async () => {
       setLoadingUsers(true);
       try {
-        // Recent 10 users fetch karo
+        // Fetch most recent 10 users
         const q        = query(collection(db, "users"), orderBy("createdAt", "desc"), limit(10));
         const snapshot = await getDocs(q);
         const allUsers = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 
         setUsers(allUsers);
 
-        // Stats calculate karo
-        const fullSnapshot = await getDocs(collection(db, "users"));
-        const allDocs      = fullSnapshot.docs.map((d) => d.data());
-        const totalUsers   = allDocs.length;
-        const totalMissions= allDocs.reduce((sum, u) => sum + (u.missionsCompleted || 0), 0);
-        const avgScore     = totalUsers > 0
+        // Calculate platform stats
+        const fullSnapshot  = await getDocs(collection(db, "users"));
+        const allDocs       = fullSnapshot.docs.map((d) => d.data());
+        const totalUsers    = allDocs.length;
+        const totalMissions = allDocs.reduce((sum, u) => sum + (u.missionsCompleted || 0), 0);
+        const avgScore      = totalUsers > 0
           ? Math.round(allDocs.reduce((sum, u) => sum + (u.totalScore || 0), 0) / totalUsers)
           : 0;
 
@@ -97,7 +96,7 @@ export default function AdminDashboard() {
     fetchUsers();
   }, []);
 
-  // ─── Logout ─────────────────────────────────────────────────
+  // ─── Logout handler ──────────────────────────────────────────
   const handleLogout = async () => {
     setLoggingOut(true);
     try {
@@ -109,7 +108,7 @@ export default function AdminDashboard() {
     }
   };
 
-  // ─── UI ─────────────────────────────────────────────────────
+  // ─── UI ──────────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-[#0D1117] flex">
 
@@ -160,7 +159,7 @@ export default function AdminDashboard() {
                        transition-colors duration-200"
           >
             <LogOut size={18} />
-            {loggingOut ? "Logout..." : "Logout"}
+            {loggingOut ? "Signing out..." : "Sign Out"}
           </button>
         </div>
       </aside>
@@ -198,7 +197,7 @@ export default function AdminDashboard() {
           <div>
             <h1 className="text-xl font-bold text-white">Platform Overview</h1>
             <p className="text-[#8B949E] text-sm mt-0.5">
-              Sab users aur activity ka summary yahan hai
+              Summary of all users and platform activity
             </p>
           </div>
 
@@ -225,7 +224,7 @@ export default function AdminDashboard() {
             <div className="bg-[#161B22] border border-[#30363D] rounded-xl p-5">
               <div className="flex items-center justify-between mb-3">
                 <p className="text-[#8B949E] text-xs font-medium uppercase tracking-wider">
-                  Missions Complete
+                  Missions Completed
                 </p>
                 <div className="w-8 h-8 bg-cyan-500/10 rounded-lg flex
                                 items-center justify-center">
@@ -260,7 +259,7 @@ export default function AdminDashboard() {
               <div>
                 <h2 className="text-white font-semibold">Weekly Activity</h2>
                 <p className="text-[#8B949E] text-xs mt-0.5">
-                  Users aur missions — is hafte
+                  New users and missions completed this week
                 </p>
               </div>
               <button className="flex items-center gap-1.5 text-[#8B949E] text-xs
@@ -270,7 +269,6 @@ export default function AdminDashboard() {
               </button>
             </div>
 
-            {/* Recharts — npm install recharts zaroor karna */}
             <ResponsiveContainer width="100%" height={220}>
               <LineChart data={CHART_DATA}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#30363D" />
@@ -331,27 +329,25 @@ export default function AdminDashboard() {
             <div className="px-6 py-4 border-b border-[#30363D] flex items-center
                             justify-between">
               <h2 className="text-white font-semibold">Recent Users</h2>
-              <span className="text-[#8B949E] text-xs">
-                Last 10 registered
-              </span>
+              <span className="text-[#8B949E] text-xs">Last 10 registered</span>
             </div>
 
             {loadingUsers ? (
               <div className="p-8 text-center">
                 <RefreshCw className="text-[#8B949E] animate-spin mx-auto mb-2" size={20} />
-                <p className="text-[#8B949E] text-sm">Users load ho rahe hain...</p>
+                <p className="text-[#8B949E] text-sm">Loading users...</p>
               </div>
             ) : users.length === 0 ? (
               <div className="p-8 text-center">
                 <AlertTriangle className="text-yellow-400 mx-auto mb-2" size={20} />
-                <p className="text-[#8B949E] text-sm">Abhi koi user nahi hai.</p>
+                <p className="text-[#8B949E] text-sm">No users registered yet.</p>
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-[#30363D]">
-                      {["Naam", "Email", "Level", "Score", "Missions", "Status"].map((h) => (
+                      {["Name", "Email", "Level", "Score", "Missions", "Status"].map((h) => (
                         <th key={h}
                             className="px-6 py-3 text-left text-xs font-medium
                                        text-[#8B949E] uppercase tracking-wider">

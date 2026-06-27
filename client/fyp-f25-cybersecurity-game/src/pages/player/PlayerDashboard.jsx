@@ -1,6 +1,6 @@
 // ============================================================
-// PlayerDashboard.jsx — Player ka main dashboard
-// Real data Firestore se aata hai useAuth() hook ke zariye
+// PlayerDashboard.jsx — Player's main dashboard
+// Real data comes from Firestore via useAuth() hook
 // ============================================================
 
 import { useState } from "react";
@@ -16,14 +16,14 @@ import {
 
 // ─── Sidebar navigation items ────────────────────────────────
 const NAV_ITEMS = [
-  { icon: LayoutDashboard, label: "Dashboard",  href: "/dashboard", active: true  },
-  { icon: Target,          label: "Missions",   href: "#",          active: false },
-  { icon: Trophy,          label: "Leaderboard",href: "#",          active: false },
-  { icon: MessageSquare,   label: "AI Chat",    href: "#",          active: false },
-  { icon: User,            label: "Profile",    href: "#",          active: false },
+  { icon: LayoutDashboard, label: "Dashboard",   href: "/dashboard", active: true  },
+  { icon: Target,          label: "Missions",    href: "#",          active: false },
+  { icon: Trophy,          label: "Leaderboard", href: "#",          active: false },
+  { icon: MessageSquare,   label: "AI Chat",     href: "#",          active: false },
+  { icon: User,            label: "Profile",     href: "#",          active: false },
 ];
 
-// ─── Sample missions data (baad mein Firestore se aayega) ────
+// ─── Sample missions data (will come from Firestore later) ───
 const MISSIONS = [
   {
     id: 1,
@@ -54,20 +54,20 @@ const MISSIONS = [
   },
 ];
 
-// ─── Recent activity (baad mein Firestore se aayega) ─────────
+// ─── Recent activity (will come from Firestore later) ────────
 const RECENT_ACTIVITY = [
-  { action: "Mission Complete",  detail: "Phishing Basics",        time: "2 ghante pehle", icon: "✅" },
-  { action: "Achievement Mili",  detail: "First Login Badge",      time: "1 din pehle",    icon: "🏆" },
-  { action: "Level Up!",         detail: "Level 1 → Level 2",      time: "2 din pehle",    icon: "⬆️" },
+  { action: "Mission Completed", detail: "Phishing Basics",   time: "2 hours ago", icon: "✅" },
+  { action: "Achievement Earned", detail: "First Login Badge", time: "1 day ago",   icon: "🏆" },
+  { action: "Level Up!",          detail: "Level 1 → Level 2", time: "2 days ago",  icon: "⬆️" },
 ];
 
 export default function PlayerDashboard() {
-  const navigate          = useNavigate();
-  const { user, userData } = useAuth();
-  const [sidebarOpen,   setSidebarOpen]   = useState(false);
-  const [loggingOut,    setLoggingOut]    = useState(false);
+  const navigate            = useNavigate();
+  const { user, userData }  = useAuth();
+  const [sidebarOpen,  setSidebarOpen]  = useState(false);
+  const [loggingOut,   setLoggingOut]   = useState(false);
 
-  // Real data ya fallback values
+  // Real data with fallback values
   const displayName       = userData?.displayName || user?.displayName || "Player";
   const level             = userData?.level             ?? 1;
   const totalScore        = userData?.totalScore        ?? 0;
@@ -141,7 +141,7 @@ export default function PlayerDashboard() {
                        transition-colors duration-200"
           >
             <LogOut size={18} />
-            {loggingOut ? "Logout ho raha hai..." : "Logout"}
+            {loggingOut ? "Signing out..." : "Sign Out"}
           </button>
         </div>
       </aside>
@@ -200,10 +200,10 @@ export default function PlayerDashboard() {
           {/* Welcome Header */}
           <div>
             <h1 className="text-xl font-bold text-white">
-              Wapas aagaye, {displayName.split(" ")[0]}! 👋
+              Welcome back, {displayName.split(" ")[0]}! 👋
             </h1>
             <p className="text-[#8B949E] text-sm mt-0.5">
-              Apni training jaari rakho — ek mission complete karo aaj.
+              Continue your training — complete a mission today.
             </p>
           </div>
 
@@ -214,7 +214,7 @@ export default function PlayerDashboard() {
             <div className="bg-[#161B22] border border-[#30363D] rounded-xl p-5">
               <div className="flex items-center justify-between mb-3">
                 <p className="text-[#8B949E] text-xs font-medium uppercase tracking-wider">
-                  Mera Level
+                  Current Level
                 </p>
                 <div className="w-8 h-8 bg-purple-500/10 rounded-lg flex
                                 items-center justify-center">
@@ -252,7 +252,7 @@ export default function PlayerDashboard() {
               </p>
               <p className="text-[#8B949E] text-xs mt-2 flex items-center gap-1">
                 <TrendingUp size={12} />
-                Top 15% players mein ho
+                You are in the top 15% of players
               </p>
             </div>
 
@@ -260,7 +260,7 @@ export default function PlayerDashboard() {
             <div className="bg-[#161B22] border border-[#30363D] rounded-xl p-5">
               <div className="flex items-center justify-between mb-3">
                 <p className="text-[#8B949E] text-xs font-medium uppercase tracking-wider">
-                  Missions Complete
+                  Missions Completed
                 </p>
                 <div className="w-8 h-8 bg-cyan-500/10 rounded-lg flex
                                 items-center justify-center">
@@ -269,7 +269,7 @@ export default function PlayerDashboard() {
               </div>
               <p className="text-3xl font-bold text-white">{missionsCompleted}</p>
               <p className="text-[#8B949E] text-xs mt-2">
-                3 missions available hain
+                3 missions available
               </p>
             </div>
 
@@ -281,7 +281,7 @@ export default function PlayerDashboard() {
               <h2 className="text-white font-semibold">Available Missions</h2>
               <button className="text-cyan-400 text-sm hover:text-cyan-300
                                  transition-colors">
-                Sab dekho →
+                View All →
               </button>
             </div>
 

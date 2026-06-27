@@ -26,20 +26,20 @@ export default function RegisterPage() {
   // Password strength check
   const getPasswordStrength = (pass) => {
     if (pass.length === 0) return null;
-    if (pass.length < 6)   return { label: "Kamzor", color: "bg-red-500",    width: "w-1/3" };
-    if (pass.length < 10)  return { label: "Theek",  color: "bg-yellow-500", width: "w-2/3" };
-    return                        { label: "Mazboot", color: "bg-green-500",  width: "w-full" };
+    if (pass.length < 6)   return { label: "Weak",   color: "bg-red-500",    width: "w-1/3" };
+    if (pass.length < 10)  return { label: "Fair",   color: "bg-yellow-500", width: "w-2/3" };
+    return                        { label: "Strong",  color: "bg-green-500",  width: "w-full" };
   };
   const strength = getPasswordStrength(password);
 
   // Firebase error messages
   const getFriendlyError = (code) => {
     switch (code) {
-      case "auth/email-already-in-use": return "Yeh email pehle se registered hai.";
-      case "auth/weak-password":        return "Password kam se kam 6 characters ka hona chahiye.";
-      case "auth/invalid-email":        return "Email format sahi nahi hai.";
-      case "auth/network-request-failed": return "Internet connection check karo.";
-      default: return "Kuch masla ho gaya. Dobara try karo.";
+      case "auth/email-already-in-use":   return "This email is already registered.";
+      case "auth/weak-password":          return "Password must be at least 6 characters.";
+      case "auth/invalid-email":          return "Please enter a valid email address.";
+      case "auth/network-request-failed": return "Network error. Please check your connection.";
+      default: return "Something went wrong. Please try again.";
     }
   };
 
@@ -50,34 +50,34 @@ export default function RegisterPage() {
 
     // Client-side validation
     if (!displayName.trim()) {
-      setError("Apna naam zaroor likho.");
+      setError("Please enter your full name.");
       return;
     }
     if (password !== confirmPass) {
-      setError("Dono passwords match nahi kar rahe.");
+      setError("Passwords do not match.");
       return;
     }
     if (password.length < 6) {
-      setError("Password kam se kam 6 characters ka hona chahiye.");
+      setError("Password must be at least 6 characters.");
       return;
     }
 
     setLoading(true);
     try {
-      // Step 1: Firebase Auth mein user banao
+      // Step 1: Create user in Firebase Auth
       const result = await createUserWithEmailAndPassword(auth, email, password);
       const user   = result.user;
 
-      // Step 2: Firebase Auth profile update karo (display name)
+      // Step 2: Update Firebase Auth profile with display name
       await updateProfile(user, { displayName: displayName.trim() });
 
-      // Step 3: Firestore mein user document banao
-      // IMPORTANT: role hamesha "player" hoga — admin sirf manually set hota hai
+      // Step 3: Create user document in Firestore
+      // IMPORTANT: role is always "player" — admin is set manually in Firestore Console
       await setDoc(doc(db, "users", user.uid), {
         uid:               user.uid,
         displayName:       displayName.trim(),
         email:             email.toLowerCase(),
-        role:              "player",           // ← Yeh kabhi mat badlo
+        role:              "player",           // ← Never change this here
         createdAt:         serverTimestamp(),
         totalScore:        0,
         missionsCompleted: 0,
@@ -85,7 +85,7 @@ export default function RegisterPage() {
         isActive:          true,
       });
 
-      // Step 4: Dashboard pe bhejo
+      // Step 4: Redirect to player dashboard
       navigate("/dashboard");
 
     } catch (err) {
@@ -114,10 +114,10 @@ export default function RegisterPage() {
             <Shield className="text-cyan-400" size={32} />
           </div>
           <h1 className="text-2xl font-bold text-white tracking-tight">
-            Account Banao
+            Create Your Account
           </h1>
           <p className="text-[#8B949E] text-sm mt-1">
-            CyberGame Platform mein shaamil ho
+            Join the CyberGame Training Platform
           </p>
         </div>
 
@@ -138,7 +138,7 @@ export default function RegisterPage() {
             {/* Display Name */}
             <div>
               <label className="block text-sm font-medium text-[#E6EDF3] mb-1.5">
-                Apna Naam
+                Full Name
               </label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2
@@ -147,7 +147,7 @@ export default function RegisterPage() {
                   type="text"
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
-                  placeholder="Faizan Fakhar"
+                  placeholder="Enter your full name"
                   required
                   className="w-full bg-[#0D1117] border border-[#30363D] rounded-lg
                              pl-10 pr-4 py-2.5 text-[#E6EDF3] text-sm
@@ -219,7 +219,7 @@ export default function RegisterPage() {
                                     ${strength.color} ${strength.width}`} />
                   </div>
                   <p className="text-xs text-[#8B949E] mt-1">
-                    Password: <span className="text-[#E6EDF3]">{strength.label}</span>
+                    Password strength: <span className="text-[#E6EDF3]">{strength.label}</span>
                   </p>
                 </div>
               )}
@@ -228,7 +228,7 @@ export default function RegisterPage() {
             {/* Confirm Password */}
             <div>
               <label className="block text-sm font-medium text-[#E6EDF3] mb-1.5">
-                Password Confirm Karo
+                Confirm Password
               </label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2
@@ -258,7 +258,7 @@ export default function RegisterPage() {
                 </button>
               </div>
               {confirmPass && password !== confirmPass && (
-                <p className="text-xs text-red-400 mt-1">Passwords match nahi kar rahe</p>
+                <p className="text-xs text-red-400 mt-1">Passwords do not match</p>
               )}
             </div>
 
@@ -270,18 +270,18 @@ export default function RegisterPage() {
                          text-black font-semibold py-2.5 rounded-lg text-sm mt-2
                          transition-colors duration-200 disabled:cursor-not-allowed"
             >
-              {loading ? "Account ban raha hai..." : "Register Karo"}
+              {loading ? "Creating account..." : "Create Account"}
             </button>
 
           </form>
 
           {/* Login link */}
           <p className="text-center text-sm text-[#8B949E] mt-6">
-            Pehle se account hai?{" "}
+            Already have an account?{" "}
             <Link to="/login"
                   className="text-cyan-400 hover:text-cyan-300 font-medium
                              transition-colors duration-200">
-              Login karo
+              Sign in
             </Link>
           </p>
         </div>

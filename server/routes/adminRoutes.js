@@ -1,7 +1,7 @@
 // ============================================================
-// adminRoutes.js — Admin ke liye routes (protected)
-// GET /api/admin/users  — Sab users ki list
-// GET /api/admin/stats  — Platform stats
+// adminRoutes.js — Admin routes (protected)
+// GET /api/admin/users  — List all users
+// GET /api/admin/stats  — Platform statistics
 // ============================================================
 
 const express = require("express");
@@ -9,7 +9,7 @@ const router  = express.Router();
 const { verifyToken, requireAdmin } = require("../middleware/authMiddleware");
 const { db } = require("../services/firebaseAdmin");
 
-// GET /api/admin/users — Sab users ki list
+// GET /api/admin/users — Fetch all users (most recent 50)
 router.get("/users", verifyToken, requireAdmin, async (req, res) => {
   try {
     const snapshot = await db
@@ -21,14 +21,13 @@ router.get("/users", verifyToken, requireAdmin, async (req, res) => {
     const users = snapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
-      // Sensitive fields server pe hi raho
       createdAt: doc.data().createdAt?.toDate?.()?.toISOString() || null,
     }));
 
     return res.json({ users, total: users.length });
   } catch (err) {
     console.error("Users fetch error:", err);
-    return res.status(500).json({ error: "Users fetch karne mein masla hua." });
+    return res.status(500).json({ error: "Failed to fetch users." });
   }
 });
 
@@ -51,8 +50,8 @@ router.get("/stats", verifyToken, requireAdmin, async (req, res) => {
       activePlayers,
     });
   } catch (err) {
-    console.error("Stats error:", err);
-    return res.status(500).json({ error: "Stats fetch karne mein masla hua." });
+    console.error("Stats fetch error:", err);
+    return res.status(500).json({ error: "Failed to fetch platform stats." });
   }
 });
 
