@@ -16,11 +16,11 @@ import {
 
 // ─── Sidebar navigation items ────────────────────────────────
 const NAV_ITEMS = [
-  { icon: LayoutDashboard, label: "Dashboard",   href: "/dashboard", active: true  },
-  { icon: Target,          label: "Missions",    href: "#",          active: false },
-  { icon: Trophy,          label: "Leaderboard", href: "#",          active: false },
-  { icon: MessageSquare,   label: "AI Chat",     href: "#",          active: false },
-  { icon: User,            label: "Profile",     href: "#",          active: false },
+  { icon: LayoutDashboard, label: "Dashboard",   href: "/dashboard",   active: true  },
+  { icon: Target,          label: "Missions",    href: "/missions",    active: false },
+  { icon: Trophy,          label: "Leaderboard", href: "/leaderboard", active: false },
+  { icon: MessageSquare,   label: "AI Chat",     href: "/ai-chat",     active: false },
+  { icon: User,            label: "Profile",     href: "/profile",     active: false },
 ];
 
 // ─── Sample missions data (will come from Firestore later) ───
@@ -328,7 +328,8 @@ export default function PlayerDashboard() {
                       +{mission.points} pts
                     </p>
                     {mission.available ? (
-                      <button className="mt-1 bg-cyan-500 hover:bg-cyan-400
+                      <button onClick={() => navigate("/mission/phishing")}
+        className="mt-1 bg-cyan-500 hover:bg-cyan-400
                                          text-black text-xs font-semibold
                                          px-3 py-1 rounded-lg transition-colors">
                         ▶ Start
