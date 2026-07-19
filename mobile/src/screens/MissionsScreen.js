@@ -46,7 +46,7 @@ const DIFFICULTY_COLORS = {
   Hard:   { bg: "rgba(239,68,68,0.1)",  text: "#EF4444" },
 };
 
-export default function MissionsScreen() {
+export default function MissionsScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -82,7 +82,7 @@ export default function MissionsScreen() {
               <View style={styles.cardBottom}>
                 <Text style={styles.points}>+{mission.points} pts</Text>
                 {mission.available ? (
-                  <TouchableOpacity style={styles.startBtn}>
+                  <TouchableOpacity style={styles.startBtn} onPress={() => mission.available && navigation.navigate("PhishingMission")}>
                     <Text style={styles.startBtnText}>▶ Start Mission</Text>
                   </TouchableOpacity>
                 ) : (
