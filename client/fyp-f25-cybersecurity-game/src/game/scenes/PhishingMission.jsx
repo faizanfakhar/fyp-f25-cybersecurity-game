@@ -6,6 +6,8 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import { saveMissionScore } from "../../services/scoreService";
 import {
   Inbox, Star, Send, Trash2, AlertTriangle,
   ChevronLeft, Search, Settings, Menu,
@@ -210,6 +212,8 @@ export default function PhishingMission() {
   const [answered, setAnswered] = useState([]);
   const [result, setResult] = useState(null);
   const [missionComplete, setMissionComplete] = useState(false);
+  const [savedResult, setSavedResult] = useState(null);
+  const { user } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const phishingEmails = emails.filter(e => e.isPhishing).length;

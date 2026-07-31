@@ -44,7 +44,7 @@ const MISSIONS = [
     points: 800,
     duration: "15 min",
     icon: "🏦",
-    available: false,
+    available: true,
     route: "/mission/banking",
     skills: ["URL Analysis", "SSL Verification", "UI Spoofing Detection"],
   },

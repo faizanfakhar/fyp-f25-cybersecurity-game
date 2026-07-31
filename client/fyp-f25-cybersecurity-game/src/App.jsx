@@ -7,6 +7,7 @@ import LoginPage        from "./pages/auth/LoginPage";
 import RegisterPage     from "./pages/auth/RegisterPage";
 import PlayerDashboard  from "./pages/player/PlayerDashboard";
 import AdminDashboard   from "./pages/admin/AdminDashboard";
+import BankingMission  from "./game/scenes/BankingMission";
 import PhishingMission  from "./game/scenes/PhishingMission";
 import MissionsPage     from "./pages/player/MissionsPage";
 import LeaderboardPage  from "./pages/player/LeaderboardPage";
@@ -24,6 +25,7 @@ export default function App() {
           <Route path="/missions"    element={<ProtectedRoute><MissionsPage /></ProtectedRoute>} />
           <Route path="/leaderboard" element={<ProtectedRoute><LeaderboardPage /></ProtectedRoute>} />
           <Route path="/profile"     element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+          <Route path="/mission/banking"  element={<ProtectedRoute><BankingMission /></ProtectedRoute>} />
           <Route path="/mission/phishing" element={<ProtectedRoute><PhishingMission /></ProtectedRoute>} />
           <Route path="/admin"       element={<AdminRoute><AdminDashboard /></AdminRoute>} />
           <Route path="*"            element={<Navigate to="/login" replace />} />
